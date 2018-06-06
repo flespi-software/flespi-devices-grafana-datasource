@@ -6,7 +6,7 @@ Plugin allows to visualize parameters of [flespi devices](https://flespi.io/docs
 
 To install this plugin using the `grafana-cli` tool:
 ```
-sudo grafana-cli --pluginUrl https://github.com/flespi-software/flespi-devices-datasource/repository/archive.zip plugins install flespi-devices-datasource
+sudo grafana-cli --pluginUrl sudo grafana-cli --pluginUrl https://github.com/flespi-software/flespi-devices-grafana-datasource/archive/master.zip plugins install flespi-devices-datasource
 sudo service grafana-server restart
 ```
 
@@ -14,10 +14,16 @@ If this command doesn't work you can manually copy `flespi-devices-datasource` d
 By default plugins directory is: `/var/lib/grafana/plugins`
 To check plugins directory in Grafana interface open: Left-upper corner menubar toggle > Configuration > Server Admin > Settings > paths/plugins
 
+To remove plugin run:
+```
+sudo grafana-cli plugins remove flespi-devices-datasource
+sudo service grafana-server restart
+```
+
 When (If) the plugin will be published on Grafana.net, installation will be done by the command:
 
 ```
-sudo grafana-cli plugins install flespi-fleet-datasource
+sudo grafana-cli plugins install flespi-devices-datasource
 sudo service grafana-server restart
 ```
 
@@ -40,7 +46,7 @@ Plugin supports template variables. The following queries can be used to create 
 
 This plugin requires node 6.10.0
 
-`npm install -g yarn`
+`sudo npm install -g yarn`
 
 `yarn install`
 

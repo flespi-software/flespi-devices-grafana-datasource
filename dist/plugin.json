@@ -1,15 +1,15 @@
 {
-  "name": "flespi-fleet",
-  "id": "flespi-fleet-datasource",
+  "name": "flespi-devices",
+  "id": "flespi-devices-datasource",
   "type": "datasource",
 
   "metrics": true,
   "annotations": false,
 
   "info": {
-    "description": "flespi fleet datasource",
+    "description": "flespi devices datasource",
     "author": {
-      "name": "flespi",
+      "name": "flespi-software",
       "url": "https://flespi.com"
     },
     "logos": {
@@ -17,12 +17,12 @@
       "large": "img/flespi-logo.svg"
     },
     "links": [
-      {"name": "GitHub", "url": "https://git.gurtam.net/namo/flespi-fleet"},
-      {"name": "MIT License", "url": "https://git.gurtam.net/namo/flespi-fleet/blob/master/LICENSE"}
+      {"name": "GitHub", "url": "https://github.com/flespi-software/flespi-devices-datasource"},
+      {"name": "MIT License", "url": "https://github.com/flespi-software/flespi-devices-datasource/blob/master/LICENSE"}
     ],
     "keywords": ["datasource", "flespi"],
-    "version": "0.0.1",
-    "updated": "2018-06-01"
+    "version": "1.0.0",
+    "updated": "2018-06-06"
   },
 
   "dependencies": {

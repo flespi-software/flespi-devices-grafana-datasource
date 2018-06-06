@@ -92,7 +92,7 @@ System.register(['app/plugins/sdk', './css/query-editor.css!'], function (_expor
         }, {
           key: 'onChangeInternal',
           value: function onChangeInternal() {
-            this.panelCtrl.refresh(); // Asks the panel to refresh data.
+            this.panelCtrl.refresh();
           }
         }]);
 

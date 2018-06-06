@@ -51,7 +51,7 @@ var FlespiDevicesDatasourceQueryCtrl = exports.FlespiDevicesDatasourceQueryCtrl 
   }, {
     key: 'onChangeInternal',
     value: function onChangeInternal() {
-      this.panelCtrl.refresh(); // Asks the panel to refresh data.
+      this.panelCtrl.refresh();
     }
   }]);
 
