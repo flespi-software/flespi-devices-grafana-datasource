@@ -1,0 +1,32 @@
+{
+  "name": "flespi-devices",
+  "id": "flespi-devices-datasource",
+  "type": "datasource",
+
+  "metrics": true,
+  "annotations": false,
+
+  "info": {
+    "description": "flespi devices datasource",
+    "author": {
+      "name": "flespi-software",
+      "url": "https://flespi.com"
+    },
+    "logos": {
+      "small": "img/flespi-logo.svg",
+      "large": "img/flespi-logo.svg"
+    },
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/flespi-software/flespi-devices-datasource"},
+      {"name": "MIT License", "url": "https://github.com/flespi-software/flespi-devices-datasource/blob/master/LICENSE"}
+    ],
+    "keywords": ["datasource", "flespi"],
+    "version": "1.0.0",
+    "updated": "2018-06-06"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "5.1.x",
+    "plugins": [ ]
+  }
+}

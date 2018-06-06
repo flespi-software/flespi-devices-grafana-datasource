@@ -1,0 +1,32 @@
+{
+  "name": "flespi-fleet",
+  "id": "flespi-fleet-datasource",
+  "type": "datasource",
+
+  "metrics": true,
+  "annotations": false,
+
+  "info": {
+    "description": "flespi fleet datasource",
+    "author": {
+      "name": "flespi",
+      "url": "https://flespi.com"
+    },
+    "logos": {
+      "small": "img/flespi-logo.svg",
+      "large": "img/flespi-logo.svg"
+    },
+    "links": [
+      {"name": "GitHub", "url": "https://git.gurtam.net/namo/flespi-fleet"},
+      {"name": "MIT License", "url": "https://git.gurtam.net/namo/flespi-fleet/blob/master/LICENSE"}
+    ],
+    "keywords": ["datasource", "flespi"],
+    "version": "0.0.1",
+    "updated": "2018-06-01"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "5.1.x",
+    "plugins": [ ]
+  }
+}

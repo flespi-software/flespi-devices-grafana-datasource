@@ -1,0 +1,32 @@
+<query-editor-row query-ctrl="ctrl" class="generic-datasource-query-row" has-text-edit-mode="true">
+  <div class="gf-form-inline">
+    <label class="gf-form-label query-keyword width-9">Device</label>
+
+    <div class="gf-form" ng-if="ctrl.target.rawQuery">
+      <textarea class="gf-form-input" rows="5" ng-model="ctrl.target.target" spellcheck="false" ng-blur="ctrl.onChangeInternal()" />
+    </div>
+    <div class="gf-form">
+      <gf-form-dropdown model="ctrl.target.target"
+                        allow-custom="false"
+        lookup-text="true"
+        get-options="ctrl.getDevices($query)"
+        on-change="ctrl.onChangeInternal()">
+      </gf-form-dropdown>
+    </div>
+
+    <label class="gf-form-label query-keyword width-9">Parameter</label>
+    <div class="gf-form">
+      <gf-form-dropdown model="ctrl.target.parameter"
+                        allow-custom="true"
+                        lookup-text="true"
+                        get-options="ctrl.getParameters($query)"
+                        on-change="ctrl.onChangeInternal()">
+      </gf-form-dropdown>
+    </div>
+    <label class="gf-form-label query-keyword width-12">Generalization function</label>
+    <div class="gf-form">
+      <select class="gf-form-input" ng-model="ctrl.target.func" ng-options="f as f for f in ['avg', 'max', 'min']"></select>
+    </div>
+
+  </div>
+</query-editor-row>
