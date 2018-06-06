@@ -38,7 +38,7 @@ Plugin supports template variables. The following queries can be used to create 
 
 | Query          | Description                                             |
 | -------------- |:-------------------------------------------------------:|
-| devices        | fetch all devices avalable for given account (token)    |
+| devices        | fetch all devices available for given account (token)   |
 | parameters     | fetch numeric parameters of devices                     |
 
 
