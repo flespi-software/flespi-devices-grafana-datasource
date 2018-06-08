@@ -32,7 +32,7 @@ export class FlespiDevicesDatasource {
 
   prepareDeviceIds(target) {
     if (target == "$device" || target == "all") {
-      this.device_ids = "all";
+      device_ids = "all";
       this.multiple_devices = true;
     } else if (target.indexOf(',') !== -1) {
       // multiple devices
@@ -42,17 +42,17 @@ export class FlespiDevicesDatasource {
         var device = devices[i];
         device_ids.push(device.substring(device.lastIndexOf('#') + 1));
       }
-      this.device_ids = device_ids.join(',');
+      device_ids = device_ids.join(',');
       this.multiple_devices = true;
     } else {
       // single device
-      this.device_ids = target.substring(target.lastIndexOf('#') + 1);
+      device_ids = target.substring(target.lastIndexOf('#') + 1);
       this.multiple_devices = false;
     }
     if (this.devices_reg == undefined) {
       this.metricFindQuery("devices");
     }
-    return this.device_ids;
+    return device_ids;
   }
 
   prepareParameters(parameter) {
@@ -68,7 +68,11 @@ export class FlespiDevicesDatasource {
       // single parameter
       this.multiple_params = false;
     }
-    return parameter + ",timestamp,device_id";
+    if (parameter.indexOf('#') !== -1) {
+      // urlescape # in parameter name
+      parameter = parameter.replace(/#/g, '%23');
+    }
+    return parameter;
   }
 
   query(options) {
@@ -91,7 +95,10 @@ export class FlespiDevicesDatasource {
     }
     var request_params = {from: from, to : to}
     if (parameters !== null) {
-      request_params.fields = parameters;
+      request_params.fields = parameters + ",timestamp,device_id";
+      if (parameters.indexOf('*') === -1) {
+        request_params.filter = parameters;
+      }
     }
 
   if (query.targets[0].func != undefined && query.targets[0].func != '') {
@@ -138,6 +145,9 @@ export class FlespiDevicesDatasource {
           continue;
         }
         var value = message[param];
+        if (typeof value == "boolean") {
+          value = (value == true) ? 1 : 0;
+        }
         if (typeof value != "number") {
           continue;
         }
@@ -177,6 +187,9 @@ export class FlespiDevicesDatasource {
           continue;
         }
         var value = message[param];
+        if (typeof value == "boolean") {
+          value = (value == true) ? 1 : 0;
+        }
         if (typeof value != "number") {
           continue;
         }
@@ -234,8 +247,8 @@ export class FlespiDevicesDatasource {
   }
 
   metricFindQuery(query) {
-    query = this.templateSrv.replace(query, null, 'glob');
-    if (query == "devices") {
+    query = this.templateSrv.replace(query, null, 'csv');
+    if (query === "devices") {
       return this.doRequest({
         url: this.url + '/gw/devices/all',
         method: 'GET',
@@ -255,13 +268,10 @@ export class FlespiDevicesDatasource {
         this.devices_reg = devices_reg;
         return res;
       });
-    } else if (query == "parameters") {
-      var device_ids = "all";
-      if (this.device_ids !== undefined) {
-        device_ids = this.device_ids;
-      }
+    } else if (query === "parameters") {
+      // get all parameters of all devices
       return this.doRequest({
-        url: this.url + '/gw/devices/' + device_ids + '?fields=telemetry',
+        url: this.url + '/gw/devices/all?fields=telemetry',
         methos: 'GET',
       }).then(response => {
         const params_set = [];
@@ -272,7 +282,8 @@ export class FlespiDevicesDatasource {
             if (this.is_skip_param(param) === true) {
               continue;
             }
-            if (typeof telemetry[param].value != "number") {
+            if (typeof telemetry[param].value != "number" && typeof telemetry[param].value != "boolean") {
+              // only numeric and boolean parameters are allowed for visualization
               continue;
             }
             if (params_set.indexOf(param) == -1) {
@@ -287,8 +298,44 @@ export class FlespiDevicesDatasource {
           res.push({value: param, text: param});
         }
         return res;
-      })
+      });
+    } else if (query.endsWith(".parameters")){
+      // get parameters of the selected devices
+      var devices = query.replace('.parameters', '');
+      var device_ids = this.prepareDeviceIds(devices);
+
+      return this.doRequest({
+        url: this.url + '/gw/devices/' + device_ids + '?fields=telemetry',
+        methos: 'GET',
+      }).then(response => {
+        const params_set = [];
+        const data = response.data.result;
+        for (var i = 0; i < data.length; i++) {
+          const telemetry = data[i].telemetry;
+          for (var param in telemetry) {
+            if (this.is_skip_param(param) === true) {
+              continue;
+            }
+            if (typeof telemetry[param].value != "number" && typeof telemetry[param].value != "boolean") {
+              // only numeric and boolean parameters are allowed for visualization
+              continue;
+            }
+            if (params_set.indexOf(param) == -1) {
+              // store new param
+              params_set.push(param);
+            }
+          }
+        }
+        const res = [];
+        for (var i = 0; i < params_set.length; i++) {
+          var param = params_set[i];
+          res.push({value: param, text: param});
+        }
+        return res;
+      });
     }
+    // empty result for incorrect query
+    return this.q.when([]);
   }
 
   mapToTextValue(result) {
