@@ -1,7 +1,12 @@
 import {FlespiDevicesDatasource} from './datasource';
 import {FlespiDevicesDatasourceQueryCtrl} from './query_ctrl';
 
-class FlespiDevicesConfigCtrl {}
+class FlespiDevicesConfigCtrl {
+  /** @ngInject */
+  constructor($scope) {
+    this.current.jsonData.uri = this.current.jsonData.uri || 'https://flespi.io';
+  }
+}
 FlespiDevicesConfigCtrl.templateUrl = 'partials/config.html';
 
 class FlespiDevicesQueryOptionsCtrl {}

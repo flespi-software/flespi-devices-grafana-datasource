@@ -18,8 +18,12 @@ System.register(['./datasource', './query_ctrl'], function (_export, _context) {
       FlespiDevicesDatasourceQueryCtrl = _query_ctrl.FlespiDevicesDatasourceQueryCtrl;
     }],
     execute: function () {
-      _export('ConfigCtrl', FlespiDevicesConfigCtrl = function FlespiDevicesConfigCtrl() {
+      _export('ConfigCtrl', FlespiDevicesConfigCtrl =
+      /** @ngInject */
+      function FlespiDevicesConfigCtrl($scope) {
         _classCallCheck(this, FlespiDevicesConfigCtrl);
+
+        this.current.jsonData.uri = this.current.jsonData.uri || 'https://flespi.io';
       });
 
       FlespiDevicesConfigCtrl.templateUrl = 'partials/config.html';

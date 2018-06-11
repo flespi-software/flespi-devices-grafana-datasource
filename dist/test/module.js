@@ -11,8 +11,12 @@ var _query_ctrl = require('./query_ctrl');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var FlespiDevicesConfigCtrl = function FlespiDevicesConfigCtrl() {
+var FlespiDevicesConfigCtrl =
+/** @ngInject */
+function FlespiDevicesConfigCtrl($scope) {
   _classCallCheck(this, FlespiDevicesConfigCtrl);
+
+  this.current.jsonData.uri = this.current.jsonData.uri || 'https://flespi.io';
 };
 
 FlespiDevicesConfigCtrl.templateUrl = 'partials/config.html';
