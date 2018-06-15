@@ -1,4 +1,6 @@
-## flespi device Datasource
+## flespi device datasource
+
+![Logo](public/plugins/flespi-devices-datasource/img/logo-flespi-devices-plugin-small.png?raw=true "flespi devices grafana plugin")
 
 Plugin allows to visualize parameters of [flespi devices](https://flespi.io/docs/#/gw/!/devices).
 

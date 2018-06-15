@@ -13,8 +13,8 @@
       "url": "https://flespi.com"
     },
     "logos": {
-      "small": "img/flespi-logo.svg",
-      "large": "img/flespi-logo.svg"
+      "small": "img/logo-flespi-devices-plugin-small.png",
+      "large": "img/logo-flespi-devices-plugin.png"
     },
     "links": [
       {"name": "GitHub", "url": "https://github.com/flespi-software/flespi-devices-grafana-datasource"},
