@@ -8,7 +8,7 @@ Plugin allows to visualize parameters of [flespi devices](https://flespi.io/docs
 
 To install this plugin using the `grafana-cli` tool:
 ```
-sudo grafana-cli --pluginUrl sudo grafana-cli --pluginUrl https://github.com/flespi-software/flespi-devices-grafana-datasource/archive/master.zip plugins install flespi-devices-datasource
+sudo grafana-cli --pluginUrl https://github.com/flespi-software/flespi-devices-grafana-datasource/archive/master.zip plugins install flespi-devices-datasource
 sudo service grafana-server restart
 ```
 
