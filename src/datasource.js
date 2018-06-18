@@ -31,15 +31,16 @@ export class FlespiDevicesDatasource {
   }
 
   prepareDeviceIds(target) {
+    let device_ids = "all";
     if (target == "$device" || target == "all") {
       device_ids = "all";
       this.multiple_devices = true;
     } else if (target.indexOf(',') !== -1) {
       // multiple devices
-      var devices = target.split(',');
-      var device_ids = [];
-      for (var i = 0; i < devices.length; i++) {
-        var device = devices[i];
+      const devices = target.split(',');
+      device_ids = [];
+      for (let i = 0; i < devices.length; i++) {
+        const device = devices[i];
         device_ids.push(device.substring(device.lastIndexOf('#') + 1));
       }
       device_ids = device_ids.join(',');
@@ -76,24 +77,24 @@ export class FlespiDevicesDatasource {
   }
 
   query(options) {
-    var query = this.buildQueryParameters(options);
+    let query = this.buildQueryParameters(options);
     query.targets = query.targets.filter(t => !t.hide);
 
     if (query.targets == null || query.targets.length <= 0 || !query.targets[0].target) {
-      return this.q.when({data: []});
+      return Promise.resolve({data: []});
     }
 
     // prepare params of request
-    var from = parseInt(Date.parse(query.range.from) / 1000);
-    var to = parseInt(Date.parse(query.range.to) / 1000);
-    var interval_sec = query.scopedVars.__interval_ms.value / 1000
-    var device_ids = this.prepareDeviceIds(query.targets[0].target);
-    var parameters = this.prepareParameters(query.targets[0].parameter);
+    const from = parseInt(Date.parse(query.range.from) / 1000);
+    const to = parseInt(Date.parse(query.range.to) / 1000);
+    const interval_sec = query.scopedVars.__interval_ms.value / 1000
+    const device_ids = this.prepareDeviceIds(query.targets[0].target);
+    const parameters = this.prepareParameters(query.targets[0].parameter);
     if (this.multiple_devices === true && this.multiple_params === true) {
       // attempt to show multiple parameters for multiple devices on one plot, don't process it
-      return this.q.when({data: []});
+      return Promise.resolve({data: []});
     }
-    var request_params = {from: from, to : to}
+    const request_params = {from: from, to : to}
     if (parameters !== null) {
       request_params.fields = parameters + ",timestamp,device_id";
       if (parameters.indexOf('*') === -1) {
@@ -104,7 +105,7 @@ export class FlespiDevicesDatasource {
   if (query.targets[0].func != undefined && query.targets[0].func != '') {
     if (interval_sec >= 60 || (interval_sec !== 0 && query.maxDataPoints > 0 && ((to - from)/interval_sec > query.maxDataPoints))) {
         // apply generalization function
-        var gen_interval = (to - from)/query.maxDataPoints;
+        const gen_interval = (to - from)/query.maxDataPoints;
         request_params.generalize = gen_interval >= 60 ? parseInt(gen_interval) : 60;
         if (query.targets[0].func == "avg") {
             request_params.method = "average";
@@ -120,7 +121,7 @@ export class FlespiDevicesDatasource {
       method: 'GET'
     }).then(response => {
       // parse response: convert device messages to timeseries
-      var messages = response.data.result;
+      const messages = response.data.result;
       if (!messages || messages.length == 0) {
         // empty response - no data points
         return {data: []};
@@ -135,27 +136,27 @@ export class FlespiDevicesDatasource {
 
   createMultipleDevicesTimeseries(messages) {
     // mutiple devices, but only one parameter
-    var data = [];
-    var dict = {};
-    for (var i = 0; i < messages.length; i++) {
-      var message = messages[i];
-      var timestamp = message.timestamp;
-      for (var param in message) {
+    const data = [];
+    const dict = {};
+    for (let i = 0; i < messages.length; i++) {
+      const message = messages[i];
+      const timestamp = message.timestamp;
+      for (let param in message) {
         if (this.is_skip_param(param) === true) {
           continue;
         }
-        var value = message[param];
+        let value = message[param];
         if (typeof value == "boolean") {
           value = (value == true) ? 1 : 0;
         }
         if (typeof value != "number") {
           continue;
         }
-        var device_id = message.device_id;
+        const device_id = message.device_id;
         if (device_id == undefined || device_id == null || this.devices_reg == undefined || this.devices_reg[device_id] == undefined) {
           return {data: []};    // unknown device - return empty datapoints
         }
-        var device_label = this.devices_reg[device_id];
+        const device_label = this.devices_reg[device_id];
         if (!dict[device_label]) {
           // create separate datapoints array for each device
           dict[device_label] = {
@@ -166,7 +167,7 @@ export class FlespiDevicesDatasource {
       }
     }
     // format parameters dictionary to timeseries
-    for (var device_label in dict) {
+    for (let device_label in dict) {
       data.push({
           target: device_label,
           datapoints: dict[device_label].datapoints
@@ -177,16 +178,16 @@ export class FlespiDevicesDatasource {
 
   createSingleDeviceTimeseries(messages) {
     // only one device, but can contain multiple parameters
-    var data = [];
-    var dict = {};
-    for (var i = 0; i < messages.length; i++) {
-      var message = messages[i];
-      var timestamp = message.timestamp;
-      for (var param in message) {
+    const data = [];
+    const dict = {};
+    for (let i = 0; i < messages.length; i++) {
+      const message = messages[i];
+      const timestamp = message.timestamp;
+      for (let param in message) {
         if (this.is_skip_param(param) === true) {
           continue;
         }
-        var value = message[param];
+        let value = message[param];
         if (typeof value == "boolean") {
           value = (value == true) ? 1 : 0;
         }
@@ -203,7 +204,7 @@ export class FlespiDevicesDatasource {
       }
     }
     // format parameters dictionary to timeseries
-    for (var param in dict) {
+    for (let param in dict) {
       data.push({
           target: param,                      // target: parameter.name
           datapoints: dict[param].datapoints  // datapoints: array of [value, timestamp]
@@ -220,12 +221,18 @@ export class FlespiDevicesDatasource {
       if (response.status === 200) {
         return { status: "success", message: "Data source is working", title: "Success" };
       }
+    }).catch(error => {
+      if (error.status === 401) {
+        return { status: "error", message: "Invalid or expired access token" };
+      } else {
+        return { status: "error", message: "Request error, code:" + error.status };
+      }
     });
   }
 
   annotationQuery(options) {
-    var query = this.templateSrv.replace(options.annotation.query, {}, 'glob');
-    var annotationQuery = {
+    let query = this.templateSrv.replace(options.annotation.query, {}, 'glob');
+    let annotationQuery = {
       range: options.range,
       annotation: {
         name: options.annotation.name,
@@ -256,17 +263,25 @@ export class FlespiDevicesDatasource {
         const devices_reg = {};     // devices registry, contains device_id: label fields
         const res = [];
         const data = response.data.result;
-        for (var i = 0; i < data.length; i++) {
-            var device_name = data[i].name;
+        for (let i = 0; i < data.length; i++) {
+            let device_name = data[i].name;
             if (device_name.indexOf(',') !== -1) {
               device_name = device_name.replace(/,/g, '');
             }
-            var label = device_name + ' #' + data[i].id;
+            const label = device_name + ' #' + data[i].id;
             devices_reg[data[i].id] = label;
             res.push({value: label, text: label});
         }
         this.devices_reg = devices_reg;
         return res;
+      }).catch(error => {
+        if (error.status === 401) {
+          throw {
+            message: "Invalid or expired access token",
+            error: error.data.errors[0],
+          };
+        }
+        throw error;
       });
     } else if (query === "parameters") {
       // get all parameters of all devices
@@ -276,9 +291,9 @@ export class FlespiDevicesDatasource {
       }).then(response => {
         const params_set = [];
         const data = response.data.result;
-        for (var i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           const telemetry = data[i].telemetry;
-          for (var param in telemetry) {
+          for (let param in telemetry) {
             if (this.is_skip_param(param) === true) {
               continue;
             }
@@ -293,16 +308,24 @@ export class FlespiDevicesDatasource {
           }
         }
         const res = [];
-        for (var i = 0; i < params_set.length; i++) {
-          var param = params_set[i];
+        for (let i = 0; i < params_set.length; i++) {
+          const param = params_set[i];
           res.push({value: param, text: param});
         }
         return res;
+      }).catch(error => {
+        if (error.status === 401) {
+          throw {
+            message: "Invalid or expired access token",
+            error: error.data.errors[0],
+          };
+        }
+        throw error;
       });
-    } else if (query.endsWith(".parameters")){
+    } else if (query.endsWith(".parameters")) {
       // get parameters of the selected devices
-      var devices = query.replace('.parameters', '');
-      var device_ids = this.prepareDeviceIds(devices);
+      const devices = query.replace('.parameters', '');
+      const device_ids = this.prepareDeviceIds(devices);
 
       return this.doRequest({
         url: this.url + '/gw/devices/' + device_ids + '?fields=telemetry',
@@ -310,9 +333,9 @@ export class FlespiDevicesDatasource {
       }).then(response => {
         const params_set = [];
         const data = response.data.result;
-        for (var i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           const telemetry = data[i].telemetry;
-          for (var param in telemetry) {
+          for (let param in telemetry) {
             if (this.is_skip_param(param) === true) {
               continue;
             }
@@ -327,15 +350,23 @@ export class FlespiDevicesDatasource {
           }
         }
         const res = [];
-        for (var i = 0; i < params_set.length; i++) {
-          var param = params_set[i];
+        for (let i = 0; i < params_set.length; i++) {
+          const param = params_set[i];
           res.push({value: param, text: param});
         }
         return res;
+      }).catch(error => {
+        if (error.status === 401) {
+          throw {
+            message: "Invalid or expired access token",
+            error: error.data.errors[0],
+          };
+        }
+        throw error;
       });
     }
     // empty result for incorrect query
-    return this.q.when([]);
+    return Promise.resolve([]);
   }
 
   mapToTextValue(result) {
@@ -355,12 +386,12 @@ export class FlespiDevicesDatasource {
   }
 
   buildQueryParameters(options) {
-    //remove placeholder targets
+    // remove placeholder targets
     options.targets = _.filter(options.targets, target => {
       return target.target !== 'select device';
     });
 
-    var targets = _.map(options.targets, target => {
+    let targets = _.map(options.targets, target => {
       return {
         target: this.templateSrv.replace(target.target, options.scopedVars, 'csv'),
         parameter: this.templateSrv.replace(target.parameter, options.scopedVars, 'csv'),

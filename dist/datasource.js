@@ -69,13 +69,14 @@ System.register(['lodash'], function (_export, _context) {
         }, {
           key: 'prepareDeviceIds',
           value: function prepareDeviceIds(target) {
+            var device_ids = "all";
             if (target == "$device" || target == "all") {
               device_ids = "all";
               this.multiple_devices = true;
             } else if (target.indexOf(',') !== -1) {
               // multiple devices
               var devices = target.split(',');
-              var device_ids = [];
+              device_ids = [];
               for (var i = 0; i < devices.length; i++) {
                 var device = devices[i];
                 device_ids.push(device.substring(device.lastIndexOf('#') + 1));
@@ -124,7 +125,7 @@ System.register(['lodash'], function (_export, _context) {
             });
 
             if (query.targets == null || query.targets.length <= 0 || !query.targets[0].target) {
-              return this.q.when({ data: [] });
+              return Promise.resolve({ data: [] });
             }
 
             // prepare params of request
@@ -135,7 +136,7 @@ System.register(['lodash'], function (_export, _context) {
             var parameters = this.prepareParameters(query.targets[0].parameter);
             if (this.multiple_devices === true && this.multiple_params === true) {
               // attempt to show multiple parameters for multiple devices on one plot, don't process it
-              return this.q.when({ data: [] });
+              return Promise.resolve({ data: [] });
             }
             var request_params = { from: from, to: to };
             if (parameters !== null) {
@@ -211,10 +212,10 @@ System.register(['lodash'], function (_export, _context) {
               }
             }
             // format parameters dictionary to timeseries
-            for (var device_label in dict) {
+            for (var _device_label in dict) {
               data.push({
-                target: device_label,
-                datapoints: dict[device_label].datapoints
+                target: _device_label,
+                datapoints: dict[_device_label].datapoints
               });
             }
             return { data: data };
@@ -249,10 +250,10 @@ System.register(['lodash'], function (_export, _context) {
               }
             }
             // format parameters dictionary to timeseries
-            for (var param in dict) {
+            for (var _param in dict) {
               data.push({
-                target: param, // target: parameter.name
-                datapoints: dict[param].datapoints // datapoints: array of [value, timestamp]
+                target: _param, // target: parameter.name
+                datapoints: dict[_param].datapoints // datapoints: array of [value, timestamp]
               });
             }
             return { data: data };
@@ -266,6 +267,12 @@ System.register(['lodash'], function (_export, _context) {
             }).then(function (response) {
               if (response.status === 200) {
                 return { status: "success", message: "Data source is working", title: "Success" };
+              }
+            }).catch(function (error) {
+              if (error.status === 401) {
+                return { status: "error", message: "Invalid or expired access token" };
+              } else {
+                return { status: "error", message: "Request error, code:" + error.status };
               }
             });
           }
@@ -318,6 +325,14 @@ System.register(['lodash'], function (_export, _context) {
                 }
                 _this2.devices_reg = devices_reg;
                 return res;
+              }).catch(function (error) {
+                if (error.status === 401) {
+                  throw {
+                    message: "Invalid or expired access token",
+                    error: error.data.errors[0]
+                  };
+                }
+                throw error;
               });
             } else if (query === "parameters") {
               // get all parameters of all devices
@@ -344,11 +359,19 @@ System.register(['lodash'], function (_export, _context) {
                   }
                 }
                 var res = [];
-                for (var i = 0; i < params_set.length; i++) {
-                  var param = params_set[i];
-                  res.push({ value: param, text: param });
+                for (var _i = 0; _i < params_set.length; _i++) {
+                  var _param2 = params_set[_i];
+                  res.push({ value: _param2, text: _param2 });
                 }
                 return res;
+              }).catch(function (error) {
+                if (error.status === 401) {
+                  throw {
+                    message: "Invalid or expired access token",
+                    error: error.data.errors[0]
+                  };
+                }
+                throw error;
               });
             } else if (query.endsWith(".parameters")) {
               // get parameters of the selected devices
@@ -378,15 +401,23 @@ System.register(['lodash'], function (_export, _context) {
                   }
                 }
                 var res = [];
-                for (var i = 0; i < params_set.length; i++) {
-                  var param = params_set[i];
-                  res.push({ value: param, text: param });
+                for (var _i2 = 0; _i2 < params_set.length; _i2++) {
+                  var _param3 = params_set[_i2];
+                  res.push({ value: _param3, text: _param3 });
                 }
                 return res;
+              }).catch(function (error) {
+                if (error.status === 401) {
+                  throw {
+                    message: "Invalid or expired access token",
+                    error: error.data.errors[0]
+                  };
+                }
+                throw error;
               });
             }
             // empty result for incorrect query
-            return this.q.when([]);
+            return Promise.resolve([]);
           }
         }, {
           key: 'mapToTextValue',
@@ -411,7 +442,7 @@ System.register(['lodash'], function (_export, _context) {
           value: function buildQueryParameters(options) {
             var _this3 = this;
 
-            //remove placeholder targets
+            // remove placeholder targets
             options.targets = _.filter(options.targets, function (target) {
               return target.target !== 'select device';
             });
