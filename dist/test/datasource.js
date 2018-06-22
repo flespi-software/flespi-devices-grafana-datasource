@@ -42,6 +42,7 @@ var FlespiDevicesDatasource = exports.FlespiDevicesDatasource = function () {
         case "ident":
         case "device_name":
         case "timestamp":
+        case "position":
           return true;
         default:
           return false;
@@ -318,7 +319,7 @@ var FlespiDevicesDatasource = exports.FlespiDevicesDatasource = function () {
       } else if (query === "parameters") {
         // get all parameters of all devices
         return this.doRequest({
-          url: this.url + '/gw/devices/all?fields=telemetry',
+          url: this.url + '/gw/devices/all/telemetry',
           methos: 'GET'
         }).then(function (response) {
           var params_set = [];
@@ -360,7 +361,7 @@ var FlespiDevicesDatasource = exports.FlespiDevicesDatasource = function () {
         var device_ids = this.prepareDeviceIds(devices);
 
         return this.doRequest({
-          url: this.url + '/gw/devices/' + device_ids + '?fields=telemetry',
+          url: this.url + '/gw/devices/' + device_ids + '/telemetry',
           methos: 'GET'
         }).then(function (response) {
           var params_set = [];

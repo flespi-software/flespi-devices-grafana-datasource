@@ -61,6 +61,7 @@ System.register(['lodash'], function (_export, _context) {
               case "ident":
               case "device_name":
               case "timestamp":
+              case "position":
                 return true;
               default:
                 return false;
@@ -337,7 +338,7 @@ System.register(['lodash'], function (_export, _context) {
             } else if (query === "parameters") {
               // get all parameters of all devices
               return this.doRequest({
-                url: this.url + '/gw/devices/all?fields=telemetry',
+                url: this.url + '/gw/devices/all/telemetry',
                 methos: 'GET'
               }).then(function (response) {
                 var params_set = [];
@@ -379,7 +380,7 @@ System.register(['lodash'], function (_export, _context) {
               var device_ids = this.prepareDeviceIds(devices);
 
               return this.doRequest({
-                url: this.url + '/gw/devices/' + device_ids + '?fields=telemetry',
+                url: this.url + '/gw/devices/' + device_ids + '/telemetry',
                 methos: 'GET'
               }).then(function (response) {
                 var params_set = [];

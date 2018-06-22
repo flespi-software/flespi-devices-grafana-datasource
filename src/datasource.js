@@ -24,6 +24,7 @@ export class FlespiDevicesDatasource {
       case "ident":
       case "device_name":
       case "timestamp":
+      case "position":
         return true;
       default:
         return false;
@@ -286,7 +287,7 @@ export class FlespiDevicesDatasource {
     } else if (query === "parameters") {
       // get all parameters of all devices
       return this.doRequest({
-        url: this.url + '/gw/devices/all?fields=telemetry',
+        url: this.url + '/gw/devices/all/telemetry',
         methos: 'GET',
       }).then(response => {
         const params_set = [];
@@ -328,7 +329,7 @@ export class FlespiDevicesDatasource {
       const device_ids = this.prepareDeviceIds(devices);
 
       return this.doRequest({
-        url: this.url + '/gw/devices/' + device_ids + '?fields=telemetry',
+        url: this.url + '/gw/devices/' + device_ids + '/telemetry',
         methos: 'GET',
       }).then(response => {
         const params_set = [];

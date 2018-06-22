@@ -21,7 +21,7 @@
       {"name": "MIT License", "url": "https://github.com/flespi-software/flespi-devices-grafana-datasource/blob/master/LICENSE"}
     ],
     "keywords": ["datasource", "flespi"],
-    "version": "1.0.1",
+    "version": "1.0.2",
     "updated": "2018-06-06"
   },
 
