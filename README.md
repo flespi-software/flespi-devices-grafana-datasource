@@ -1,6 +1,6 @@
 ## [DEPRECATED] flespi device datasource
 ### The flespi-devices-grafana-datasource is not working with grafana 7+
-At the moment we do not have the resources to adapt the plugin for new versions of grafana.
+### For grafana 10+ please use [flespi-parameters-datasource](https://github.com/flespi-software/flespi-parameters-grafana-datasource) plugin.
 
 ![Logo](https://github.com/flespi-software/flespi-devices-grafana-datasource/blob/master/src/img/logo-flespi-devices-plugin-small.png?raw=true "flespi devices grafana plugin")
 
